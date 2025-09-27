@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlumniConnect - Events</title>
+    <link rel="stylesheet" href="output.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .modal { display: none; background-color: rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-indigo-600">AlumniConnect</h1>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Home</a>
+                        <a href="alumni.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Alumni</a>
+                        <a href="#" class="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Events</a>
+                        <a href="internships.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Internships</a>
+                       
+                        <div id="nav-loading" class="hidden">
+                            <span class="text-gray-500 text-sm font-medium">Loading...</span>
+                        </div>
+                        <div id="user-profile-nav" class="flex items-center space-x-4 hidden">
+                            <span id="user-name" class="text-gray-900 text-sm font-medium"></span>
+                            <a href="profile.html">
+                                <img id="profile-pic" class="w-8 h-8 rounded-full border-2 border-indigo-500" src="https://via.placeholder.com/150" alt="Profile Picture">
+                            </a>
+                            <button id="logout-button" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">Log Out</button>
+                        </div>
+                        <div id="auth-links-nav" class="flex items-center space-x-4 hidden">
+                            <a href="login.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Sign In</a>
+                            <a href="signup.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">Join Network</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-16 bg-white min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center mb-12">
+                <div>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-2">Upcoming Events</h2>
+                    <p class="text-xl text-gray-600">Connect, learn, and grow with fellow alumni</p>
+                </div>
+                <button id="post-event-btn" class="hidden bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">Post an Event</button>
+            </div>
+            <div id="events-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div id="loading-message" class="text-center text-gray-500 text-lg col-span-full">Loading events...</div>
+            </div>
+        </div>
+    </section>
+
+    <div id="post-event-modal" class="modal fixed inset-0 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl p-8 shadow-lg w-full max-w-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-900">Post a New Event</h3>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-900 text-3xl">&times;</button>
+            </div>
+            <form id="event-form">
+                <div class="mb-4">
+                    <label for="event_title" class="block text-gray-700 font-medium mb-2">Event Title</label>
+                    <input type="text" id="event_title" class="w-full px-4 py-2 border rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <label for="event_description" class="block text-gray-700 font-medium mb-2">Description</label>
+                    <textarea id="event_description" rows="4" class="w-full px-4 py-2 border rounded-lg" required></textarea>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="event_date" class="block text-gray-700 font-medium mb-2">Date</label>
+                        <input type="date" id="event_date" class="w-full px-4 py-2 border rounded-lg" required>
+                    </div>
+                    <div>
+                        <label for="event_time" class="block text-gray-700 font-medium mb-2">Time</label>
+                        <input type="time" id="event_time" class="w-full px-4 py-2 border rounded-lg" required>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <label for="event_seats" class="block text-gray-700 font-medium mb-2">Total Seats</label>
+                    <input type="number" id="event_seats" class="w-full px-4 py-2 border rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <label for="event_type" class="block text-gray-700 font-medium mb-2">Event Type</label>
+                    <select id="event_type" class="w-full px-4 py-2 border rounded-lg" required>
+                        <option value="Virtual">Virtual</option>
+                        <option value="In-Person">In-Person</option>
+                        <option value="Workshop">Workshop</option>
+                    </select>
+                </div>
+                <p id="event-error-message" class="text-red-500 text-sm mb-4 hidden"></p>
+                <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">Post Event</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">AlumniConnect</h3>
+                    <p class="text-gray-400">Building bridges between past, present, and future generations of graduates.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="alumni.html" class="hover:text-white transition-colors">Alumni Directory</a></li>
+                        <li><a href="internships.html" class="hover:text-white transition-colors">Internships</a></li>
+                        <li><a href="profile.html" class="hover:text-white transition-colors">Profile</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">News & Updates</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Success Stories</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Alumni Benefits</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Stay Connected</h4>
+                    <p class="text-gray-400 mb-4">Get the latest alumni news and updates</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="flex-1 px-4 py-2 rounded-l-lg text-gray-900">
+                        <button class="bg-indigo-600 px-4 py-2 rounded-r-lg hover:bg-indigo-700 transition-colors">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AlumniConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+        import { getDatabase, ref, get, child, push, onValue, set, update } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+        import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDM772D6lzjRkj3VQxOV466Of3AgRPrxSk",
+            authDomain: "alumniconnect-ee98c.firebaseapp.com",
+            projectId: "alumniconnect-ee98c",
+            storageBucket: "alumniconnect-ee98c.firebasestorage.app",
+            messagingSenderId: "171857807694",
+            appId: "1:171857807694:web:f7908c33c65e17b160361f",
+            measurementId: "G-QEJ3YVDR3R"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app); // FIXED SYNTAX
+        const dbRef = ref(db);
+
+        const userProfileNav = document.getElementById('user-profile-nav');
+        const authLinksNav = document.getElementById('auth-links-nav');
+        const userNameElement = document.getElementById('user-name');
+        const profilePicElement = document.getElementById('profile-pic');
+        const logoutButton = document.getElementById('logout-button');
+        const postEventBtn = document.getElementById('post-event-btn');
+        const eventsList = document.getElementById('events-list');
+        const eventForm = document.getElementById('event-form');
+        const postEventModal = document.getElementById('post-event-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const loadingMessage = document.getElementById('loading-message');
+        const eventErrorMsg = document.getElementById('event-error-message');
+
+        let userRole = null;
+        let userData = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // FIX: Use single /users path check for fast login
+                const userSnapshot = await get(child(ref(db), `users/${user.uid}`));
+                userData = userSnapshot.val();
+                userRole = userData ? userData.role : null;
+                
+                if (userData) {
+                    userNameElement.textContent = `Hello, ${userData.firstName}!`;
+                    if (userData.photoURL) {
+                        profilePicElement.src = userData.photoURL;
+                    }
+                } else {
+                    userNameElement.textContent = `Hello, ${user.displayName || user.email}!`;
+                }
+
+                userProfileNav.classList.remove('hidden');
+                authLinksNav.classList.add('hidden');
+
+                if (userRole === 'alumni') {
+                    postEventBtn.classList.remove('hidden');
+                } else {
+                    postEventBtn.classList.add('hidden');
+                }
+            } else {
+                userRole = null;
+                userData = null;
+                userProfileNav.classList.add('hidden');
+                authLinksNav.classList.remove('hidden');
+                postEventBtn.classList.add('hidden');
+            }
+        });
+
+        // Logout functionality
+        logoutButton.addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        });
+
+        // Modal functionality
+        postEventBtn.addEventListener('click', () => {
+            eventForm.reset();
+            postEventModal.style.display = 'flex';
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            postEventModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === postEventModal) {
+                postEventModal.style.display = 'none';
+            }
+        });
+
+        // Event posting logic
+        eventForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (userRole !== 'alumni') {
+                eventErrorMsg.textContent = 'Only alumni can post events.';
+                eventErrorMsg.classList.remove('hidden');
+                return;
+            }
+            
+            const newEventRef = push(child(dbRef, 'events'));
+            const eventData = {
+                title: e.target.event_title.value,
+                description: e.target.event_description.value,
+                date: e.target.event_date.value,
+                time: e.target.event_time.value,
+                seats: parseInt(e.target.event_seats.value, 10),
+                type: e.target.event_type.value,
+                postedBy: userData.firstName + ' ' + userData.lastName,
+                postedById: auth.currentUser.uid,
+                attendees: {}, // Empty object for attendees
+                timestamp: Date.now()
+            };
+
+            try {
+                await set(newEventRef, eventData);
+                eventForm.reset();
+                postEventModal.style.display = 'none';
+                eventErrorMsg.classList.add('hidden');
+            } catch (error) {
+                eventErrorMsg.textContent = 'Failed to post event. Please try again.';
+                eventErrorMsg.classList.remove('hidden');
+            }
+        });
+
+        // Event registration logic
+        document.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('register-event-btn')) {
+                const eventId = e.target.dataset.eventId;
+                const eventRef = child(dbRef, `events/${eventId}`);
+                const eventSnapshot = await get(eventRef);
+                const event = eventSnapshot.val();
+                
+                if (userRole === null) {
+                    alert('Please sign in to register for an event.');
+                    window.location.href = 'login.html';
+                    return;
+                }
+
+                if (event.attendees && Object.keys(event.attendees).includes(auth.currentUser.uid)) {
+                    alert('You have already registered for this event.');
+                    return;
+                }
+
+                const attendeesCount = event.attendees ? Object.keys(event.attendees).length : 0;
+                if (attendeesCount >= event.seats) {
+                    alert('This event is full. No more seats available.');
+                    return;
+                }
+
+                try {
+                    const newAttendee = {
+                        name: userData.firstName + ' ' + userData.lastName,
+                        email: userData.email,
+                        registeredAt: Date.now()
+                    };
+                    await set(child(eventRef, `attendees/${auth.currentUser.uid}`), newAttendee);
+                    alert('Registration successful!');
+                } catch (error) {
+                    alert('Registration failed. Please try again.');
+                }
+            }
+        });
+
+        // Displaying and rendering events
+        onValue(ref(db, 'events'), (snapshot) => { // FIXED SYNTAX
+            loadingMessage.remove();
+            eventsList.innerHTML = '';
+            if (snapshot.exists()) {
+                const events = snapshot.val();
+                const eventKeys = Object.keys(events).reverse();
+                eventKeys.forEach(key => {
+                    const event = events[key];
+                    const attendeesCount = event.attendees ? Object.keys(event.attendees).length : 0;
+                    const eventCard = document.createElement('div');
+                    eventCard.className = 'bg-white rounded-xl p-6 shadow-sm border border-gray-200';
+                    eventCard.innerHTML = `
+                        <div class="flex items-center mb-4">
+                            <div class="bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-medium">${event.type}</div>
+                            <div class="ml-auto text-sm text-gray-500">${event.date} at ${event.time}</div>
+                        </div>
+                        <h3 class="text-2xl font-semibold mb-2">${event.title}</h3>
+                        <p class="text-gray-600 mb-4">${event.description}</p>
+                        <div class="flex items-center justify-between text-sm text-gray-500 mt-4">
+                            <span>Seats: ${attendeesCount}/${event.seats}</span>
+                            <span>Posted by: ${event.postedBy}</span>
+                        </div>
+                        <button class="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-colors mt-4 register-event-btn" data-event-id="${key}">Register Now</button>
+                    `;
+                    eventsList.appendChild(eventCard);
+                });
+            } else {
+                eventsList.innerHTML = `<div class="text-center text-gray-500 text-lg col-span-full">No upcoming events.</div>`;
+            }
+        });
+    </script>
+</body>
+</html>

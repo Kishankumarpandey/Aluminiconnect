@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlumniConnect - Internships</title>
+    <link rel="stylesheet" href="output.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .modal { display: none; background-color: rgba(0,0,0,0.5); }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <nav class="bg-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <h1 class="text-2xl font-bold text-indigo-600">AlumniConnect</h1>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Home</a>
+                        <a href="alumni.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Alumni</a>
+                        <a href="events.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Events</a>
+                        <a href="#" class="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Internships</a>
+                                <div id="user-profile-nav" class="flex items-center space-x-4 hidden">
+                            <span id="user-name" class="text-gray-900 text-sm font-medium"></span>
+                            <a href="profile.html">
+                                <img id="profile-pic" class="w-8 h-8 rounded-full border-2 border-indigo-500" src="https://via.placeholder.com/150" alt="Profile Picture">
+                            </a>
+                            <button id="logout-button" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">Log Out</button>
+                        </div>
+                        <div id="auth-links-nav" class="flex items-center space-x-4">
+                            <a href="login.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Sign In</a>
+                            <a href="signup.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">Join Network</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-16 bg-white min-h-screen">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col sm:flex-row justify-between items-center mb-12">
+                <div>
+                    <h2 class="text-4xl font-bold text-gray-900 mb-2">Internships for Students</h2>
+                    <p class="text-xl text-gray-600">Explore opportunities posted by our alumni community.</p>
+                </div>
+                <div class="flex flex-col sm:flex-row gap-4 mt-6 sm:mt-0">
+                    <input type="text" id="search-input" placeholder="Search by title or company..." class="px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 w-full sm:w-64">
+                    <button id="post-internship-btn" class="hidden bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors w-full sm:w-auto">Post an Internship</button>
+                </div>
+            </div>
+            <div id="internships-list" class="grid md:grid-cols-2 gap-8">
+                <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-200 flex flex-col justify-between opacity-80">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Web Development Intern (Sample Post)</h3>
+                        <h4 class="text-xl font-semibold text-indigo-600 mb-3">Tech Solutions Inc.</h4>
+                        <p class="text-gray-600 text-sm mb-4 whitespace-pre-wrap">This is a sample post to show you how internships will look. You can add a detailed description of the role, responsibilities, and requirements here. Once you post, a new card like this will appear for all students to see.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <a href="https://example.com" target="_blank" class="block text-center bg-indigo-500 text-white py-2 rounded-lg font-semibold hover:bg-indigo-600 transition-colors">Apply Now</a>
+                        <p class="text-xs text-gray-400 mt-2 text-right">Posted by: John Doe on 10/26/2025</p>
+                    </div>
+                </div>
+                <div id="loading-message" class="text-center text-gray-500 text-lg col-span-full">Loading internships...</div>
+            </div>
+        </div>
+    </section>
+
+    <div id="post-internship-modal" class="modal fixed inset-0 z-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl p-8 shadow-lg w-full max-w-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-2xl font-bold text-gray-900">Post an Internship</h3>
+                <button id="close-modal-btn" class="text-gray-500 hover:text-gray-900 text-3xl">&times;</button>
+            </div>
+            <form id="internship-form">
+                <div class="mb-4">
+                    <label for="title" class="block text-gray-700 font-medium mb-2">Job Title</label>
+                    <input type="text" id="title" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <label for="company" class="block text-gray-700 font-medium mb-2">Company Name</label>
+                    <input type="text" id="company" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                </div>
+                <div class="mb-4">
+                    <label for="description" class="block text-gray-700 font-medium mb-2">Description</label>
+                    <textarea id="description" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required></textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="apply-link" class="block text-gray-700 font-medium mb-2">Application Link</label>
+                    <input type="url" id="apply-link" class="w-full px-4 py-2 border border-gray-300 rounded-lg" required>
+                </div>
+                <p id="internship-error-message" class="text-red-500 text-sm mb-4 hidden"></p>
+                <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">Post Internship</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">AlumniConnect</h3>
+                    <p class="text-gray-400">Building bridges between past, present, and future generations of graduates.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-white transition-colors">Home</a></li>
+                        <li><a href="internships.html" class="hover:text-white transition-colors">Internships</a></li>
+                        <li><a href="login.html" class="hover:text-white transition-colors">Sign In</a></li>
+                        <li><a href="signup.html" class="hover:text-white transition-colors">Join Network</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-white transition-colors">News & Updates</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Success Stories</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Alumni Benefits</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Stay Connected</h4>
+                    <p class="text-gray-400 mb-4">Get the latest alumni news and updates</p>
+                    <div class="flex">
+                        <input type="email" placeholder="Your email" class="flex-1 px-4 py-2 rounded-l-lg text-gray-900">
+                        <button class="bg-indigo-600 px-4 py-2 rounded-r-lg hover:bg-indigo-700 transition-colors">Subscribe</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
+                <p>&copy; 2024 AlumniConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+        import { getDatabase, ref, get, child, push, onValue, set } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+        import { getStorage, ref as storageRef, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-storage.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDM772D6lzjRkj3VQxOV466Of3AgRPrxSk",
+            authDomain: "alumniconnect-ee98c.firebaseapp.com",
+            projectId: "alumniconnect-ee98c",
+            storageBucket: "alumniconnect-ee98c.firebasestorage.app",
+            messagingSenderId: "171857807694",
+            appId: "1:171857807694:web:f7908c33c65e17b160361f",
+            measurementId: "G-QEJ3YVDR3R"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app); // FIXED SYNTAX
+        const dbRef = ref(db);
+
+        const userProfileNav = document.getElementById('user-profile-nav');
+        const authLinksNav = document.getElementById('auth-links-nav');
+        const userNameElement = document.getElementById('user-name');
+        const profilePicElement = document.getElementById('profile-pic');
+        const logoutButton = document.getElementById('logout-button');
+        const postInternshipBtn = document.getElementById('post-internship-btn');
+        const internshipsList = document.getElementById('internships-list');
+        const internshipForm = document.getElementById('internship-form');
+        const postInternshipModal = document.getElementById('post-internship-modal');
+        const closeModalBtn = document.getElementById('close-modal-btn');
+        const internshipErrorMsg = document.getElementById('internship-error-message');
+        const loadingMessage = document.getElementById('loading-message');
+        const searchInput = document.getElementById('search-input');
+
+        let userRole = null;
+        let userData = null;
+        let allInternships = {};
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                // FIX: Use single /users path check for fast login
+                const userSnapshot = await get(child(ref(db), `users/${user.uid}`));
+                userData = userSnapshot.val();
+                userRole = userData ? userData.role : null;
+                
+                if (userData) {
+                    userNameElement.textContent = `Hello, ${userData.firstName}!`;
+                    if (userData.photoURL) {
+                        profilePicElement.src = userData.photoURL;
+                    }
+                } else {
+                    userNameElement.textContent = `Hello, ${user.displayName || user.email}!`;
+                }
+
+                userProfileNav.classList.remove('hidden');
+                authLinksNav.classList.add('hidden');
+
+                if (userRole === 'alumni') {
+                    postInternshipBtn.classList.remove('hidden');
+                } else {
+                    postInternshipBtn.classList.add('hidden');
+                }
+            } else {
+                userRole = null;
+                userData = null;
+                userProfileNav.classList.add('hidden');
+                authLinksNav.classList.remove('hidden');
+                postInternshipBtn.classList.add('hidden');
+            }
+        });
+
+        logoutButton.addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        });
+
+        postInternshipBtn.addEventListener('click', () => {
+            internshipForm.reset();
+            postInternshipModal.style.display = 'flex';
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            postInternshipModal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === postInternshipModal) {
+                postInternshipModal.style.display = 'none';
+            }
+        });
+
+        internshipForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (userRole !== 'alumni') {
+                internshipErrorMsg.textContent = 'Only alumni can post internships.';
+                internshipErrorMsg.classList.remove('hidden');
+                return;
+            }
+            
+            const newPostRef = push(child(dbRef, 'internships'));
+            const internshipData = {
+                title: e.target.title.value,
+                company: e.target.company.value,
+                description: e.target.description.value,
+                applyLink: e.target['apply-link'].value,
+                postedBy: userData.firstName + ' ' + userData.lastName,
+                timestamp: Date.now()
+            };
+
+            try {
+                await set(newPostRef, internshipData);
+                internshipForm.reset();
+                postInternshipModal.style.display = 'none';
+                internshipErrorMsg.classList.add('hidden');
+            } catch (error) {
+                internshipErrorMsg.textContent = 'Failed to post internship. Please try again.';
+                internshipErrorMsg.classList.remove('hidden');
+            }
+        });
+
+        function renderInternships(posts) {
+            const dynamicPosts = Object.fromEntries(
+                Object.entries(posts).filter(([key, post]) => key !== 'sample_post')
+            );
+
+            internshipsList.innerHTML = '';
+            
+            const samplePostHTML = `
+                <div class="bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-200 flex flex-col justify-between opacity-80">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-2">Web Development Intern (Sample Post)</h3>
+                        <h4 class="text-xl font-semibold text-indigo-600 mb-3">Tech Solutions Inc.</h4>
+                        <p class="text-gray-600 text-sm mb-4 whitespace-pre-wrap">This is a sample post to show you how internships will look. You can add a detailed description of the role, responsibilities, and requirements here. Once you post, a new card like this will appear for all students to see.</p>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-200">
+                        <a href="#" target="_blank" class="block text-center bg-indigo-500 text-white py-2 rounded-lg font-semibold hover:bg-indigo-600 transition-colors">Apply Now</a>
+                        <p class="text-xs text-gray-400 mt-2 text-right">Posted by: John Doe on 10/26/2025</p>
+                    </div>
+                </div>
+            `;
+            internshipsList.innerHTML = samplePostHTML;
+
+            if (Object.keys(dynamicPosts).length > 0) {
+                const postKeys = Object.keys(dynamicPosts).reverse();
+                postKeys.forEach(key => {
+                    const post = dynamicPosts[key];
+                    const internshipCard = document.createElement('div');
+                    internshipCard.className = 'bg-gray-50 rounded-xl p-6 shadow-sm border border-gray-200 card-hover flex flex-col justify-between';
+                    internshipCard.innerHTML = `
+                        <div>
+                            <h3 class="text-2xl font-bold text-gray-900 mb-2">${post.title}</h3>
+                            <h4 class="text-xl font-semibold text-indigo-600 mb-3">${post.company}</h4>
+                            <p class="text-gray-600 text-sm mb-4 whitespace-pre-wrap">${post.description}</p>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-gray-200">
+                            <a href="${post.applyLink}" target="_blank" class="block text-center bg-indigo-500 text-white py-2 rounded-lg font-semibold hover:bg-indigo-600 transition-colors">Apply Now</a>
+                            <p class="text-xs text-gray-400 mt-2 text-right">Posted by: ${post.postedBy} on ${new Date(post.timestamp).toLocaleDateString()}</p>
+                        </div>
+                    `;
+                    internshipsList.appendChild(internshipCard);
+                });
+            }
+        }
+        
+        onValue(ref(dbRef, 'internships'), (snapshot) => {
+            loadingMessage.classList.add('hidden');
+            if (snapshot.exists()) {
+                allInternships = snapshot.val();
+                renderInternships(allInternships);
+            } else {
+                renderInternships({});
+            }
+        });
+
+        searchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredInternships = Object.fromEntries(
+                Object.entries(allInternships).filter(([key, post]) => {
+                    return post.title.toLowerCase().includes(searchTerm) || post.company.toLowerCase().includes(searchTerm);
+                })
+            );
+            renderInternships(filteredInternships);
+        });
+    </script>
+</body>
+</html>

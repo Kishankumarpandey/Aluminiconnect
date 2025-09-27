@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Directory - AlumniConnect</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script> 
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .hero-gradient { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .directory-gradient { background: linear-gradient(135deg, #f0f4ff 0%, #e6f0ff 100%); }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0 flex items-center">
+                        <svg class="h-8 w-8 text-blue-600 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path d="M12 21a9 9 0 01-9-9c0-1.874.685-3.62 1.838-4.966M21 12a9 9 0 00-9-9c-1.874 0-3.62.685-4.966 1.838M12 21a9 9 0 009-9M3 12a9 9 0 019-9m-4.5 9l-2-2m0 0l-2 2m2-2V7m2.5 5l2 2m0 0l2-2m-2 2V7" />
+                        </svg>
+                        <span class="text-2xl font-bold text-gray-800">AlumniConnect</span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-8">
+                        <a href="index.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Home</a>
+                        <a href="alumni.html" class="text-gray-900 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Alumni</a>
+                        <a href="events.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Events</a>
+                        <a href="internships.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Internships</a>
+                        
+                        <div id="nav-loading" class="hidden">
+                            <span class="text-gray-500 text-sm font-medium">Loading...</span>
+                        </div>
+                        <div id="user-profile-nav" class="flex items-center space-x-4 hidden">
+                            <span id="user-name" class="text-gray-900 text-sm font-medium"></span>
+                            <a href="profile.html">
+                                <img id="profile-pic" class="w-8 h-8 rounded-full border-2 border-indigo-500" src="https://via.placeholder.com/150" alt="Profile Picture">
+                            </a>
+                            <button id="logout-button" class="bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition-colors">Log Out</button>
+                        </div>
+                        <div id="auth-links-nav" class="flex items-center space-x-4">
+                            <a href="login.html" class="text-gray-500 hover:text-indigo-600 px-3 py-2 text-sm font-medium transition-colors">Sign In</a>
+                            <a href="signup.html" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors">Join Network</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <section class="directory-gradient py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-2">Global Alumni Directory</h1>
+                <p class="text-lg text-gray-600">Find and connect with peers worldwide</p>
+                <div class="mt-6 flex flex-col sm:flex-row gap-4 items-center">
+                    <button id="join-network-btn" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-700 transition-colors flex-shrink-0">Join Network</button>
+                    <div class="relative w-full">
+                        <input type="text" id="alumni-search-input" placeholder="Search by name, college, or department..." class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <svg class="w-6 h-6 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                        </svg>
+                    </div>
+                    <button class="bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold hover:bg-blue-600 transition-colors flex-shrink-0">Filter</button>
+                </div>
+            </div>
+            
+            <div class="bg-white p-8 rounded-2xl shadow-xl">
+                <div id="alumni-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                    <div id="alumni-loading" class="text-center text-gray-500 text-lg col-span-full">Loading alumni...</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center">
+            <div class="text-gray-400 text-sm mb-4 md:mb-0">
+                &copy; 2025 AlumniConnect
+            </div>
+            <div class="flex gap-6 text-sm text-gray-400">
+                <a href="#" class="hover:text-white transition-colors">Contact</a>
+                <a href="#" class="hover:text-white transition-colors">Terms</a>
+            </div>
+            <div class="flex gap-4 mt-4 md:mt-0">
+                <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm1.5-11.385c-.973 0-1.76.787-1.76 1.76s.787 1.76 1.76 1.76 1.76-.787 1.76-1.76-.787-1.76-1.76-1.76zm13.5 11.385h-3v-5.625c0-1.04-.84-1.875-1.875-1.875-1.041 0-1.875.835-1.875 1.875v5.625h-3v-5.625c0-3.045 2.455-5.5 5.5-5.5s5.5 2.455 5.5 5.5v5.625h-3v-5.625z"></path></svg>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.795-1.574 2.16-2.723-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.594 0-6.5 2.906-6.5 6.5 0 .508.058 1.002.164 1.478-5.397-.27-10.198-2.868-13.407-6.797-.56.966-.883 2.083-.883 3.256 0 2.292 1.166 4.316 2.943 5.49-.691-.023-1.341-.213-1.908-.528v.08c0 3.175 2.263 5.823 5.253 6.42-.558.152-1.144.234-1.742.234-.427 0-.845-.042-1.254-.119.834 2.617 3.268 4.524 6.136 4.577-2.251 1.765-5.078 2.812-8.156 2.812-.531 0-1.05-.031-1.56-.092 2.904 1.861 6.353 2.95 10.067 2.95 12.085 0 18.679-9.924 18.679-18.679 0-.285-.006-.569-.019-.851.962-.693 1.794-1.564 2.463-2.559z"></path></svg>
+                </a>
+                <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22.675 3.136c.866-.991 1.294-2.174 1.325-3.414h-5.021v12.288h-4.329v-12.288h-5.018v12.288h-4.329v-12.288h-5.021c.031 1.24-.399 2.423-1.325 3.414-.991.866-2.174 1.294-3.414 1.325v5.021h12.288v4.329h-12.288v5.018h12.288v4.329h-12.288v5.021c1.24-.031 2.423.399 3.414 1.325.991.866 2.174 1.294 3.414 1.325h5.021v-12.288h4.329v12.288h5.018v-12.288c-1.24-.031-2.423-.399-3.414-1.325-.991-.866-2.174-1.294-3.414-1.325z"></path></svg>
+                </a>
+            </div>
+        </div>
+    </footer>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
+        import { getDatabase, ref, get, child, onValue } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDM772D6lzjRkj3VQxOV466Of3AgRPrxSk",
+            authDomain: "alumniconnect-ee98c.firebaseapp.com",
+            projectId: "alumniconnect-ee98c",
+            storageBucket: "alumniconnect-ee98c.firebasestorage.app",
+            messagingSenderId: "171857807694",
+            appId: "1:171857807694:web:f7908c33c65e17b160361f",
+            measurementId: "G-QEJ3YVDR3R"
+        };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getDatabase(app); 
+        const dbRef = ref(db);
+
+        const alumniList = document.getElementById('alumni-list');
+        const alumniSearchInput = document.getElementById('alumni-search-input');
+        const navLoading = document.getElementById('nav-loading');
+        const userProfileNav = document.getElementById('user-profile-nav');
+        const authLinksNav = document.getElementById('auth-links-nav');
+        const userNameElement = document.getElementById('user-name');
+        const profilePicElement = document.getElementById('profile-pic');
+        const logoutButton = document.getElementById('logout-button');
+        const joinNetworkBtn = document.getElementById('join-network-btn');
+
+        let allAlumni = {};
+
+        // Authentication State Listener
+        onAuthStateChanged(auth, async (user) => {
+            navLoading.style.display = 'flex';
+            userProfileNav.classList.add('hidden');
+            authLinksNav.classList.add('hidden');
+            joinNetworkBtn.classList.add('hidden');
+
+            if (user) {
+                // FIX: Use the single /users path check for fast login
+                const userSnapshot = await get(child(ref(db), `users/${user.uid}`)); // FIXED SYNTAX
+                let userData = userSnapshot.val();
+                let userRole = userData ? userData.role : null;
+                
+                navLoading.style.display = 'none';
+
+                if (userData) {
+                    userNameElement.textContent = `Hello, ${userData.firstName}!`;
+                    if (userData.photoURL) {
+                        profilePicElement.src = userData.photoURL;
+                    }
+                } else {
+                    userNameElement.textContent = `Hello, ${user.displayName || user.email}!`;
+                }
+                userProfileNav.classList.remove('hidden');
+
+                // Load directory data only if logged in (This is already fast)
+                onValue(ref(db, 'users'), (snapshot) => { // FIXED SYNTAX
+                    const loadingMessage = document.getElementById('alumni-loading');
+                    if (loadingMessage) loadingMessage.remove();
+
+                    if (snapshot.exists()) {
+                        // Filter out non-alumni/student users for the directory
+                        const rawData = snapshot.val();
+                        allAlumni = Object.fromEntries(
+                            Object.entries(rawData).filter(([key, u]) => u.role)
+                        );
+                        renderAlumni(allAlumni);
+                    } else {
+                        renderAlumni({});
+                    }
+                });
+
+            } else {
+                navLoading.style.display = 'none';
+                userProfileNav.classList.add('hidden');
+                authLinksNav.classList.remove('hidden');
+                joinNetworkBtn.classList.remove('hidden');
+
+                // If not logged in, show a message instead of 'Loading...'
+                alumniList.innerHTML = `<div class="text-center text-gray-500 text-lg col-span-full">Please sign in to view the alumni directory.</div>`;
+            }
+        });
+
+        // Logout functionality
+        logoutButton.addEventListener('click', async () => {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        });
+
+        joinNetworkBtn.addEventListener('click', () => {
+            window.location.href = 'signup.html';
+        });
+
+        // Function to render alumni cards
+        function renderAlumni(alumniData) {
+            alumniList.innerHTML = '';
+            const loadingMessage = document.getElementById('alumni-loading');
+            if (loadingMessage) loadingMessage.remove();
+
+            if (alumniData && Object.keys(alumniData).length > 0) {
+                Object.values(alumniData).forEach(alumnus => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-white rounded-xl shadow-md p-4 flex flex-col items-center text-center border border-gray-200';
+                    const initials = (alumnus.firstName ? alumnus.firstName.charAt(0) : '') + (alumnus.lastName ? alumnus.lastName.charAt(0) : '');
+                    card.innerHTML = `
+                        <img src="${alumnus.photoURL || 'https://via.placeholder.com/100'}" alt="${alumnus.firstName} ${alumnus.lastName}" class="w-20 h-20 rounded-full object-cover mb-3">
+                        <h4 class="text-lg font-semibold text-gray-900">${alumnus.firstName} ${alumnus.lastName}</h4>
+                        <p class="text-sm text-gray-600">${alumnus.department || 'N/A'}</p>
+                        <p class="text-xs text-gray-400 mb-4">${alumnus.college || 'N/A'}</p>
+                        <a href="https://wa.me/${alumnus.mobileNo}" target="_blank" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors">Message on WhatsApp</a>
+                    `;
+                    alumniList.appendChild(card);
+                });
+            } else {
+                alumniList.innerHTML = `<div class="text-center text-gray-500 text-lg col-span-full">No alumni profiles found.</div>`;
+            }
+        }
+        
+        // Search and filter functionality
+        alumniSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredAlumni = Object.fromEntries(
+                Object.entries(allAlumni).filter(([key, alumnus]) => {
+                    return (alumnus.firstName && alumnus.firstName.toLowerCase().includes(searchTerm)) ||
+                           (alumnus.lastName && alumnus.lastName.toLowerCase().includes(searchTerm)) ||
+                           (alumnus.college && alumnus.college.toLowerCase().includes(searchTerm)) ||
+                           (alumnus.department && alumnus.department.toLowerCase().includes(searchTerm));
+                })
+            );
+            renderAlumni(filteredAlumni);
+        });
+    </script>
+</body>
+</html>
